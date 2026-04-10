@@ -1,8 +1,12 @@
+\PassOptionsToPackage{table}{xcolor}
 \documentclass[aspectratio=169,11pt]{beamer}
 
-% --- Theme ---
-\usetheme{Madrid}
-\usecolortheme{whale}
+% ============================================================
+% IXTI Geoespacial — Custom Theme
+% ============================================================
+
+% --- Remove navigation symbols ---
+\setbeamertemplate{navigation symbols}{}
 
 % --- Packages ---
 \usepackage[utf8]{inputenc}
@@ -14,20 +18,96 @@
 \usepackage{fontawesome5}
 \usepackage{tcolorbox}
 \usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{etoolbox}
+
+\usetikzlibrary{shapes,arrows.meta,positioning,calc,decorations.pathreplacing}
+
+% --- IXTI Color Palette ---
+\definecolor{ixtiLightGray}{HTML}{98adb1}
+\definecolor{ixtiLightGreen}{HTML}{c9e0a7}
+\definecolor{ixtiGreen}{HTML}{74cd83}
+\definecolor{ixtiTeal}{HTML}{2c8893}
+\definecolor{ixtiDark}{HTML}{173e4a}
+\definecolor{ixtiBlack}{HTML}{041e26}
+
+% --- Beamer Colors ---
+\setbeamercolor{normal text}{fg=ixtiBlack, bg=white}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{subtitle}{fg=ixtiLightGreen}
+\setbeamercolor{author}{fg=ixtiLightGray}
+\setbeamercolor{date}{fg=ixtiLightGray}
+\setbeamercolor{frametitle}{fg=white, bg=ixtiDark}
+\setbeamercolor{framesubtitle}{fg=ixtiLightGreen}
+\setbeamercolor{block title}{fg=white, bg=ixtiTeal}
+\setbeamercolor{block body}{fg=ixtiBlack, bg=ixtiLightGray!15}
+\setbeamercolor{block title alerted}{fg=white, bg=ixtiGreen!80!black}
+\setbeamercolor{block body alerted}{fg=ixtiBlack, bg=ixtiGreen!10}
+\setbeamercolor{block title example}{fg=white, bg=ixtiDark}
+\setbeamercolor{block body example}{fg=ixtiBlack, bg=ixtiDark!5}
+\setbeamercolor{item}{fg=ixtiTeal}
+\setbeamercolor{subitem}{fg=ixtiGreen!80!black}
+\setbeamercolor{section in toc}{fg=ixtiDark}
+\setbeamercolor{section number projected}{bg=ixtiTeal, fg=white}
+\setbeamercolor{footline}{fg=ixtiLightGray, bg=ixtiBlack}
+
+% --- Beamer Fonts ---
+\setbeamerfont{title}{size=\Huge, series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}
+\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\normalsize}
+\setbeamerfont{block title}{size=\normalsize, series=\bfseries}
+
+% --- Itemize style ---
+\setbeamertemplate{itemize item}{\color{ixtiTeal}\faChevronRight}
+\setbeamertemplate{itemize subitem}{\color{ixtiGreen}\textbullet}
+\setbeamertemplate{enumerate item}{\color{ixtiTeal}\insertenumlabel.}
+
+% --- Custom Frame Title ---
+\setbeamertemplate{frametitle}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[ixtiDark] (current page.north west) rectangle ([yshift=-1.3cm]current page.north east);
+    \ifx\insertframesubtitle\empty
+      \node[anchor=west, text=white, font=\Large\bfseries] at ([xshift=0.8cm, yshift=-0.65cm]current page.north west) {\insertframetitle};
+    \else
+      \node[anchor=west, text=white, font=\large\bfseries] at ([xshift=0.8cm, yshift=-0.45cm]current page.north west) {\insertframetitle};
+      \node[anchor=west, text=ixtiGreen, font=\footnotesize\itshape] at ([xshift=0.8cm, yshift=-1.05cm]current page.north west) {\insertframesubtitle};
+    \fi
+    % Green accent line
+    \fill[ixtiGreen] ([yshift=-1.3cm]current page.north west) rectangle ([yshift=-1.35cm]current page.north east);
+  \end{tikzpicture}
+  \vspace{0.7cm}
+}
+
+% --- Footline ---
+\setbeamertemplate{footline}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[ixtiBlack] (current page.south west) rectangle ([yshift=0.4cm]current page.south east);
+    \node[anchor=west, text=ixtiLightGray, font=\tiny] at ([xshift=0.5cm, yshift=0.2cm]current page.south west) {IXTI Geoespacial \(\vert\) Vibe Coder Guide 2026};
+    \node[anchor=east, text=ixtiLightGray, font=\tiny] at ([xshift=-0.5cm, yshift=0.2cm]current page.south east) {\insertframenumber\,/\,\inserttotalframenumber};
+    % Small logo
+    \node[anchor=center] at ([xshift=0cm, yshift=0.2cm]current page.south) {\includegraphics[height=0.25cm]{../ixti_logo.png}};
+  \end{tikzpicture}
+}
 
 % --- Code style ---
 \lstset{
-  basicstyle=\ttfamily\scriptsize,
-  backgroundcolor=\color{gray!10},
-  frame=single,
-  framerule=0pt,
+  basicstyle=\ttfamily\tiny,
+  backgroundcolor=\color{ixtiDark!5},
+  frame=none,
   breaklines=true,
   showstringspaces=false,
   tabsize=2,
   columns=fullflexible,
-  keywordstyle=\color{blue!70!black}\bfseries,
-  stringstyle=\color{green!50!black},
-  commentstyle=\color{gray},
+  keywordstyle=\color{ixtiTeal}\bfseries,
+  stringstyle=\color{ixtiGreen!70!black},
+  commentstyle=\color{ixtiLightGray},
+  rulecolor=\color{ixtiTeal},
+  xleftmargin=0.3cm,
+  xrightmargin=0.3cm,
 }
 
 \lstdefinelanguage{yaml}{
@@ -38,108 +118,372 @@
   morestring=[b]",
 }
 
+% --- tcolorbox styles ---
+\tcbuselibrary{skins,breakable}
+
+\newtcolorbox{quoteblock}[1][]{%
+  enhanced, colback=ixtiDark!5, colframe=ixtiGreen,
+  left=12pt, right=12pt, top=8pt, bottom=8pt,
+  boxrule=0pt, borderline west={3pt}{0pt}{ixtiGreen},
+  fontupper=\normalsize\itshape\color{ixtiDark},
+  #1
+}
+
+\newtcolorbox{impactbox}[1][]{%
+  enhanced, colback=ixtiTeal!10, colframe=ixtiTeal,
+  left=10pt, right=10pt, top=8pt, bottom=8pt,
+  boxrule=1pt, arc=4pt,
+  fontupper=\color{ixtiDark},
+  #1
+}
+
+\newtcolorbox{statbox}[1][]{%
+  enhanced, colback=ixtiGreen!10, colframe=ixtiGreen!70!black,
+  left=10pt, right=10pt, top=6pt, bottom=6pt,
+  boxrule=1pt, arc=8pt,
+  #1
+}
+
+% --- Custom command for section title slides ---
+\newcommand{\sectionslide}[2]{%
+  \begin{frame}[plain]
+    \begin{tikzpicture}[remember picture, overlay]
+      \fill[ixtiBlack] (current page.south west) rectangle (current page.north east);
+      % Gradient overlay
+      \fill[ixtiDark, opacity=0.7] ([yshift=-2cm]current page.north west) rectangle (current page.south east);
+      % Green accent line
+      \fill[ixtiGreen] ([yshift=0.1cm, xshift=-4cm]current page.center) rectangle ([yshift=0.15cm, xshift=4cm]current page.center);
+      % Section title
+      \node[anchor=center, text=white, font=\Huge\bfseries] at ([yshift=0.8cm]current page.center) {#1};
+      \node[anchor=center, text=ixtiLightGray, font=\large] at ([yshift=-0.5cm]current page.center) {#2};
+      % Logo
+      \node[anchor=south east] at ([xshift=-0.5cm, yshift=0.5cm]current page.south east) {\includegraphics[height=0.8cm]{../ixti_logo.png}};
+    \end{tikzpicture}
+  \end{frame}
+}
+
 % --- Info ---
 \title{Vibe Coder Guide}
-\subtitle{Cómo explotar al máximo GitHub Copilot\\para desarrollo de software}
-\author{Tu Nombre}
+\subtitle{Domina GitHub Copilot y multiplica tu productividad}
+\author{IXTI Geoespacial}
 \date{2026}
-\institute{}
 
 % ====================
 \begin{document}
 
-% --- Title ---
-\begin{frame}
-  \titlepage
+% ============================================================
+% TITLE SLIDE
+% ============================================================
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    % Background
+    \fill[ixtiBlack] (current page.south west) rectangle (current page.north east);
+    % Subtle geometric pattern
+    \foreach \i in {1,...,8} {
+      \draw[ixtiDark, line width=0.5pt, opacity=0.4] ([xshift=\i*2cm]current page.south west) -- ([xshift=\i*2cm-3cm]current page.north west);
+    }
+    % Green accent bar
+    \fill[ixtiGreen] ([yshift=3.9cm, xshift=2cm]current page.south west) rectangle ([yshift=3.95cm, xshift=14cm]current page.south west);
+    % Logo
+    \node[anchor=north west] at ([xshift=1cm, yshift=-0.8cm]current page.north west) {\includegraphics[height=1.2cm]{../ixti_logo.png}};
+    % Title
+    \node[anchor=west, text=white, font=\fontsize{36}{42}\selectfont\bfseries, text width=13cm] at ([xshift=2cm, yshift=1.5cm]current page.west) {Vibe Coder Guide};
+    % Subtitle
+    \node[anchor=west, text=ixtiGreen, font=\Large] at ([xshift=2cm, yshift=0.3cm]current page.west) {Domina GitHub Copilot y multiplica tu productividad};
+    % Bottom info
+    \node[anchor=west, text=ixtiLightGray, font=\normalsize] at ([xshift=2cm, yshift=-1.2cm]current page.west) {IXTI Geoespacial \(\vert\) IA \(\cdot\) Ciencia de Datos \(\cdot\) Geoespacial};
+    \node[anchor=east, text=ixtiLightGray, font=\small] at ([xshift=-1cm, yshift=-1.2cm]current page.east) {2026};
+    % Large decorative icon
+    \node[anchor=east, opacity=0.08, text=ixtiGreen] at ([xshift=-0.5cm, yshift=1cm]current page.east) {\fontsize{120}{120}\selectfont\faRobot};
+  \end{tikzpicture}
 \end{frame}
 
-% --- Agenda ---
+% ============================================================
+% HOOK SLIDE
+% ============================================================
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[ixtiBlack] (current page.south west) rectangle (current page.north east);
+    \node[anchor=center, text=white, font=\fontsize{28}{34}\selectfont\bfseries, text width=12cm, align=center] at ([yshift=1cm]current page.center) {
+      ``La IA no va a quitarte el trabajo.\\[6pt]
+      Alguien que sepa usar IA\ldots\ s\'i.''
+    };
+    \node[anchor=center, text=ixtiGreen, font=\large] at ([yshift=-2.5cm]current page.center) {--- La nueva realidad del desarrollo de software};
+  \end{tikzpicture}
+\end{frame}
+
+% ============================================================
+% AGENDA
+% ============================================================
 \begin{frame}{Agenda}
-  \tableofcontents
-\end{frame}
-
-% ============================================================
-\section{Introducción}
-% ============================================================
-
-\begin{frame}{¿Para quién es este curso?}
-  \begin{itemize}
-    \item Personas que están comenzando en desarrollo de software
-    \item Desarrolladores que quieren ser más productivos con IA
-    \item Equipos que buscan estandarizar su código
-  \end{itemize}
-
-  \vspace{1em}
-
-  \begin{alertblock}{Filosofía}
-    No se trata de que la IA escriba código por ti.\\
-    Se trata de que la IA escriba código \textbf{como tú quieres}.
-  \end{alertblock}
-\end{frame}
-
-\begin{frame}{¿Qué vamos a lograr?}
-  \begin{enumerate}
-    \item Definir \textbf{reglas} que Copilot seguirá automáticamente
-    \item Crear \textbf{plantillas} reutilizables para tareas comunes
-    \item Tener \textbf{agentes especializados} (desarrollador, tester)
-    \item Generar módulos CRUD completos con un solo comando
-    \item Ejecutar tests y deployments desde el chat
-  \end{enumerate}
-
-  \vspace{1em}
-  \centering
-  \textbf{Todo sin escribir código manualmente.}
-\end{frame}
-
-\begin{frame}{El Proyecto de Ejemplo}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      \textbf{API REST} con:
-      \begin{itemize}
-        \item FastAPI (Python)
-        \item PostgreSQL
-        \item SQLAlchemy 2.0
-        \item Docker Compose
-      \end{itemize}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{enumerate}
+        \item[\textcolor{ixtiGreen}{\textbf{01}}] El nuevo panorama del desarrollo
+        \item[\textcolor{ixtiGreen}{\textbf{02}}] Para qui\'en es este curso
+        \item[\textcolor{ixtiGreen}{\textbf{03}}] El proyecto de ejemplo
+        \item[\textcolor{ixtiGreen}{\textbf{04}}] Arquitectura modular
+        \item[\textcolor{ixtiGreen}{\textbf{05}}] Las 5 primitivas de Copilot
+        \item[\textcolor{ixtiGreen}{\textbf{06}}] Instructions: Las reglas del juego
+      \end{enumerate}
     \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{3 Módulos CRUD:}
-      \begin{itemize}
-        \item Users (usuarios)
-        \item Products (productos)
-        \item Orders (pedidos)
-      \end{itemize}
-
-      \vspace{0.5em}
-      Cada módulo: 7 archivos, misma estructura.
+    \begin{column}{0.48\textwidth}
+      \begin{enumerate}
+        \item[\textcolor{ixtiGreen}{\textbf{07}}] Prompts: Acciones con un clic
+        \item[\textcolor{ixtiGreen}{\textbf{08}}] Agents: Roles especializados
+        \item[\textcolor{ixtiGreen}{\textbf{09}}] Skills: Flujos complejos
+        \item[\textcolor{ixtiGreen}{\textbf{10}}] Demo en vivo
+        \item[\textcolor{ixtiGreen}{\textbf{11}}] Mejores pr\'acticas
+        \item[\textcolor{ixtiGreen}{\textbf{12}}] El futuro es ahora
+      \end{enumerate}
     \end{column}
   \end{columns}
 \end{frame}
 
 % ============================================================
-\section{Arquitectura del Proyecto}
+\sectionslide{El Nuevo Panorama}{El desarrollo de software cambi\'o para siempre}
 % ============================================================
 
-\begin{frame}[fragile]{Estructura Modular}
-  Cada entidad vive en su propia carpeta con 7 archivos:
+\begin{frame}{El mundo antes y despu\'es de la IA}
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=red!5, colframe=red!40!black, title={\color{white}\faTimesCircle\ Antes (2020)}, fonttitle=\bfseries, top=3pt, bottom=3pt]
+        \small
+        \begin{itemize}\setlength{\itemsep}{0pt}
+          \item[\textcolor{red!60}{\faTimes}] Buscar en Stack Overflow
+          \item[\textcolor{red!60}{\faTimes}] Copiar/pegar sin entender
+          \item[\textcolor{red!60}{\faTimes}] Escribir boilerplate a mano
+          \item[\textcolor{red!60}{\faTimes}] Configurar todo desde cero
+          \item[\textcolor{red!60}{\faTimes}] Inconsistencia entre m\'odulos
+        \end{itemize}
+        \centering\textcolor{red!60}{\small\faHourglass\ 4--6 horas por CRUD}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiGreen!8, colframe=ixtiGreen!70!black, title={\color{white}\faCheckCircle\ Ahora (2026)}, fonttitle=\bfseries, top=3pt, bottom=3pt]
+        \small
+        \begin{itemize}\setlength{\itemsep}{0pt}
+          \item[\textcolor{ixtiGreen}{\faCheck}] La IA entiende tu contexto
+          \item[\textcolor{ixtiGreen}{\faCheck}] Genera c\'odigo con tus reglas
+          \item[\textcolor{ixtiGreen}{\faCheck}] M\'odulos completos en minutos
+          \item[\textcolor{ixtiGreen}{\faCheck}] Tests incluidos autom\'aticamente
+          \item[\textcolor{ixtiGreen}{\faCheck}] Consistencia garantizada
+        \end{itemize}
+        \centering\textcolor{ixtiGreen!70!black}{\small\faBolt\ 5--10 minutos por CRUD}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
 
-  \begin{lstlisting}[language=bash]
-app/users/
-  __init__.py      # Vacio
-  constants.py     # Mensajes de respuesta
-  exceptions.py    # Excepciones HTTP custom
-  models.py        # Modelo SQLAlchemy
-  schemas.py       # Schemas Pydantic (Create, Update, Response)
-  service.py       # Logica de negocio (CRUD)
-  routes.py        # Endpoints FastAPI
-  \end{lstlisting}
-
-  \begin{block}{¿Por qué?}
-    Si todos los módulos tienen la \textbf{misma estructura}, la IA puede generarlos automáticamente.
-  \end{block}
+  \vspace{0.2em}
+  \centering
+  \textcolor{ixtiDark}{\textbf{Pero hay una diferencia crucial\ldots}}
 \end{frame}
 
-\begin{frame}[fragile]{Ejemplo: models.py}
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[ixtiDark] (current page.south west) rectangle (current page.north east);
+    \node[anchor=center, text=white, font=\fontsize{22}{28}\selectfont\bfseries, text width=13cm, align=center] at ([yshift=1.5cm]current page.center) {
+      La misma herramienta.\\[8pt]
+      Dos resultados completamente diferentes.
+    };
+    \fill[ixtiGreen] ([yshift=-0.3cm, xshift=-4cm]current page.center) rectangle ([yshift=-0.25cm, xshift=4cm]current page.center);
+    \node[anchor=center, text=ixtiLightGray, font=\normalsize, text width=12cm, align=center] at ([yshift=-1.5cm]current page.center) {
+      Un principiante con Copilot genera c\'odigo que \textit{funciona}.\\[4pt]
+      Un desarrollador con Copilot \textbf{bien configurado} genera c\'odigo que\\[2pt]
+      funciona, es consistente, tiene tests, y est\'a listo para producci\'on.
+    };
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{La brecha: Sin conocimiento vs.\ Con conocimiento}
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiLightGray!10, colframe=ixtiLightGray, title={\faUser\ Principiante + Copilot}, fonttitle=\small\bfseries, coltitle=ixtiDark, top=3pt, bottom=3pt]
+        \small
+        \textit{``Crea un CRUD de usuarios''}
+        \vspace{0.2em}
+        \begin{itemize}\setlength{\itemsep}{0pt}
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Todo en un solo archivo
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Sin manejo de errores
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Sin validaci\'on
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] HTTPException por todos lados
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Sin tests
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Cada m\'odulo diferente
+        \end{itemize}
+        \centering\textcolor{ixtiLightGray}{\small Resultado: caos escalable}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiGreen!5, colframe=ixtiTeal, title={\faUserGraduate\ Dev + Copilot configurado}, fonttitle=\small\bfseries, coltitle=white, top=3pt, bottom=3pt]
+        \small
+        \textit{``/new-crud Category name:str''}
+        \vspace{0.2em}
+        \begin{itemize}\setlength{\itemsep}{0pt}
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] 7 archivos organizados
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] Excepciones custom
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] Schemas Pydantic validados
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] Async/await correcto
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] Tests autom\'aticos
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] Todos los m\'odulos id\'enticos
+        \end{itemize}
+        \centering\textcolor{ixtiTeal}{\small Resultado: c\'odigo de producci\'on}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.1em}
+  \centering\textcolor{ixtiTeal}{\small\itshape La diferencia no es la herramienta. Es \textbf{qui\'en la configura} y \textbf{qu\'e reglas le da}.}
+\end{frame}
+
+% ============================================================
+\sectionslide{Para Qui\'en Es Este Curso}{Construyendo las bases correctas desde el inicio}
+% ============================================================
+
+\begin{frame}{Tu perfil}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \begin{itemize}
+        \item Est\'as \textbf{empezando} en desarrollo de software
+        \item Quieres aprender con las herramientas \textbf{del presente}
+        \item Buscas ser \textbf{productivo desde el d\'ia uno}
+        \item Quieres que tu c\'odigo sea \textbf{profesional}, no solo funcional
+      \end{itemize}
+
+      \vspace{0.3em}
+      \begin{impactbox}[top=4pt, bottom=4pt]
+        \centering\small
+        \textbf{No necesitas a\~nos de experiencia.}\\
+        Necesitas las \textbf{herramientas correctas} y saber \textbf{c\'omo guiarlas}.
+      \end{impactbox}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \centering
+      \begin{tikzpicture}
+        \node[draw=ixtiTeal, fill=ixtiTeal!10, rounded corners=10pt, minimum width=5cm, minimum height=1.6cm, align=center, font=\large\bfseries\color{ixtiDark}] at (0,2.5) {\faGraduationCap\ Aprender\'as};
+        \node[draw=ixtiGreen!70!black, fill=ixtiGreen!10, rounded corners=8pt, minimum width=4.5cm, minimum height=0.7cm, align=center, font=\small\color{ixtiDark}] at (0,1.2) {\faCog\ Configurar Copilot a tu medida};
+        \node[draw=ixtiGreen!70!black, fill=ixtiGreen!10, rounded corners=8pt, minimum width=4.5cm, minimum height=0.7cm, align=center, font=\small\color{ixtiDark}] at (0,0.2) {\faLayerGroup\ Arquitectura modular};
+        \node[draw=ixtiGreen!70!black, fill=ixtiGreen!10, rounded corners=8pt, minimum width=4.5cm, minimum height=0.7cm, align=center, font=\small\color{ixtiDark}] at (0,-0.8) {\faRobot\ Agentes especializados};
+        \node[draw=ixtiGreen!70!black, fill=ixtiGreen!10, rounded corners=8pt, minimum width=4.5cm, minimum height=0.7cm, align=center, font=\small\color{ixtiDark}] at (0,-1.8) {\faRocket\ Deploy automatizado};
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Lo que vamos a lograr hoy}
+  \begin{center}
+    \begin{tikzpicture}[
+      node distance=0.15cm,
+      stepbox/.style={draw=ixtiTeal, fill=ixtiTeal!8, rounded corners=6pt, minimum width=2.3cm, minimum height=1.2cm, align=center, font=\scriptsize\color{ixtiDark}},
+      arrow/.style={-{Stealth[length=5pt]}, ixtiGreen, line width=1.5pt}
+    ]
+      \node[stepbox] (s1) {\faLightbulb\\[2pt]\textbf{Definir}\\reglas};
+      \node[stepbox, right=of s1] (s2) {\faFileCode\\[2pt]\textbf{Crear}\\plantillas};
+      \node[stepbox, right=of s2] (s3) {\faTerminal\\[2pt]\textbf{Un comando}\\= m\'odulo};
+      \node[stepbox, right=of s3] (s4) {\faVial\\[2pt]\textbf{Tests}\\autom\'aticos};
+      \node[stepbox, right=of s4] (s5) {\faDocker\\[2pt]\textbf{Deploy}\\con un clic};
+
+      \draw[arrow] (s1) -- (s2);
+      \draw[arrow] (s2) -- (s3);
+      \draw[arrow] (s3) -- (s4);
+      \draw[arrow] (s4) -- (s5);
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.3em}
+  \begin{quoteblock}[top=4pt, bottom=4pt]
+    \small De una idea a producci\'on. Sin escribir c\'odigo manualmente.\\Siguiendo est\'andares profesionales.
+  \end{quoteblock}
+\end{frame}
+
+% ============================================================
+\sectionslide{El Proyecto de Ejemplo}{API REST con FastAPI + PostgreSQL}
+% ============================================================
+
+\begin{frame}{Stack Tecnol\'ogico}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \begin{table}
+        \centering
+        \rowcolors{2}{ixtiDark!5}{white}
+        \begin{tabular}{@{}ll@{}}
+          \toprule
+          \textcolor{ixtiTeal}{\textbf{Herramienta}} & \textcolor{ixtiTeal}{\textbf{Rol}} \\
+          \midrule
+          Python 3.12 & Lenguaje principal \\
+          FastAPI & Framework web async \\
+          SQLAlchemy 2.0 & ORM (async) \\
+          PostgreSQL & Base de datos \\
+          Pydantic v2 & Validaci\'on de datos \\
+          Docker Compose & Despliegue \\
+          pytest & Testing \\
+          \bottomrule
+        \end{tabular}
+      \end{table}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \begin{statbox}
+        \centering
+        \textcolor{ixtiGreen!70!black}{\fontsize{26}{30}\selectfont\textbf{3}}\\[4pt]
+        \textcolor{ixtiDark}{M\'odulos CRUD de ejemplo}\\[8pt]
+        \small
+        \textcolor{ixtiTeal}{\faUser\ Users} \quad
+        \textcolor{ixtiTeal}{\faBox\ Products} \quad
+        \textcolor{ixtiTeal}{\faShoppingCart\ Orders}
+      \end{statbox}
+
+      \vspace{0.3em}
+      \begin{statbox}
+        \centering
+        \textcolor{ixtiGreen!70!black}{\fontsize{26}{30}\selectfont\textbf{7}}\\[4pt]
+        \textcolor{ixtiDark}{Archivos por m\'odulo}\\[4pt]
+        \small\textcolor{ixtiLightGray}{Todos con la misma estructura}
+      \end{statbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+\sectionslide{Arquitectura Modular}{La clave para que la IA genere c\'odigo consistente}
+% ============================================================
+
+\begin{frame}{Estructura de un M\'odulo}
+  \framesubtitle{Todos los m\'odulos son id\'enticos en forma}
+
+  \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+      \begin{tcolorbox}[colback=ixtiDark!3, colframe=ixtiDark, title={\textcolor{white}{\faFolder\ app/users/}}, fonttitle=\small\bfseries\ttfamily]
+        \ttfamily\small
+        \textcolor{ixtiLightGray}{\_\_init\_\_.py} \hfill \textcolor{ixtiLightGray}{\footnotesize vac\'io}\\[3pt]
+        \textcolor{ixtiTeal}{constants.py} \hfill \textcolor{ixtiLightGray}{\footnotesize mensajes}\\[3pt]
+        \textcolor{ixtiTeal}{exceptions.py} \hfill \textcolor{ixtiLightGray}{\footnotesize errores HTTP}\\[3pt]
+        \textcolor{ixtiGreen!70!black}{models.py} \hfill \textcolor{ixtiLightGray}{\footnotesize tabla en DB}\\[3pt]
+        \textcolor{ixtiGreen!70!black}{schemas.py} \hfill \textcolor{ixtiLightGray}{\footnotesize validaci\'on}\\[3pt]
+        \textcolor{ixtiDark}{service.py} \hfill \textcolor{ixtiLightGray}{\footnotesize l\'ogica CRUD}\\[3pt]
+        \textcolor{ixtiDark}{routes.py} \hfill \textcolor{ixtiLightGray}{\footnotesize endpoints}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{impactbox}[top=4pt, bottom=4pt]
+        \small\textbf{Por qu\'e esta estructura}\\[4pt]
+        Si todos los m\'odulos tienen la \textbf{misma forma}, la IA puede:
+        \begin{itemize}
+          \item Aprender el patr\'on con un ejemplo
+          \item Replicarlo perfectamente
+          \item Ser consistente siempre
+        \end{itemize}
+      \end{impactbox}
+
+      \vspace{0.1em}
+      \begin{quoteblock}[fontupper=\footnotesize\itshape\color{ixtiDark}, top=4pt, bottom=4pt]
+        La estandarizaci\'on no limita la creatividad. La \textbf{libera} para lo que realmente importa.
+      \end{quoteblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo: El modelo}
+  \framesubtitle{SQLAlchemy 2.0 --- Typed y moderno}
+
   \begin{lstlisting}[language=Python]
 from datetime import datetime
 from sqlalchemy import String
@@ -153,14 +497,18 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(255), unique=True)
     is_active: Mapped[bool] = mapped_column(default=True)
-    created_at: Mapped[datetime] = mapped_column(
-        default_factory=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(
-        default_factory=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default_factory=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(default_factory=datetime.utcnow,
+                                                  onupdate=datetime.utcnow)
   \end{lstlisting}
+
+  \vspace{0.3em}
+  \centering\small\textcolor{ixtiTeal}{\faInfoCircle\ Siempre \texttt{id}, \texttt{created\_at}, \texttt{updated\_at}. Sin excepciones.}
 \end{frame}
 
-\begin{frame}[fragile]{Ejemplo: service.py}
+\begin{frame}[fragile]{Ejemplo: El servicio}
+  \framesubtitle{L\'ogica pura, sin HTTP --- separaci\'on de responsabilidades}
+
   \begin{lstlisting}[language=Python]
 async def get_all(session: AsyncSession) -> list[User]:
     result = await session.execute(select(User))
@@ -169,7 +517,7 @@ async def get_all(session: AsyncSession) -> list[User]:
 async def get_by_id(session: AsyncSession, user_id: int) -> User:
     user = await session.get(User, user_id)
     if not user:
-        raise UserNotFoundException()
+        raise UserNotFoundException()    # Excepcion custom, NO HTTPException
     return user
 
 async def create(session: AsyncSession, data: UserCreate) -> User:
@@ -182,37 +530,65 @@ async def create(session: AsyncSession, data: UserCreate) -> User:
 \end{frame}
 
 % ============================================================
-\section{Herramientas de Personalización de Copilot}
+\sectionslide{Las 5 Primitivas de Copilot}{Tu kit completo de personalizaci\'on}
 % ============================================================
 
-\begin{frame}{Las 5 Primitivas de Copilot}
+\begin{frame}{El Mapa Completo}
+  \centering
+  \begin{tikzpicture}[
+    box/.style={draw=ixtiTeal, fill=ixtiTeal!8, rounded corners=6pt, minimum width=3.2cm, minimum height=1.7cm, align=center, font=\small},
+  ]
+    % Row 1 - Always on
+    \node[box] (inst) at (0,0) {\textcolor{ixtiTeal}{\faScroll}\\[2pt]\textbf{Instructions}\\[-1pt]\tiny Reglas globales};
+    \node[box] (finst) at (3.8,0) {\textcolor{ixtiTeal}{\faFileAlt}\\[2pt]\textbf{File Instructions}\\[-1pt]\tiny Reglas por archivo};
+
+    % Row 2 - On demand
+    \node[box] (prompt) at (-1.9,-2.5) {\textcolor{ixtiTeal}{\faComment}\\[2pt]\textbf{Prompts}\\[-1pt]\tiny Tareas reutilizables};
+    \node[box] (agent) at (1.9,-2.5) {\textcolor{ixtiTeal}{\faRobot}\\[2pt]\textbf{Agents}\\[-1pt]\tiny Roles especializados};
+    \node[box] (skill) at (5.7,-2.5) {\textcolor{ixtiTeal}{\faCogs}\\[2pt]\textbf{Skills}\\[-1pt]\tiny Flujos complejos};
+
+    % Labels
+    \node[font=\scriptsize\color{ixtiGreen}, anchor=east] at (-1.8, 0) {\faToggleOn\ Siempre\\activos};
+    \node[font=\scriptsize\color{ixtiTeal}, anchor=east] at (-3.6, -2.5) {\faBolt\ Bajo\\demanda};
+
+    % Brackets
+    \draw[ixtiGreen, thick, decorate, decoration={brace, amplitude=8pt}] (-1.2,1.0) -- (5.0,1.0) node[midway, above=10pt, font=\small\bfseries\color{ixtiGreen}] {Se aplican autom\'aticamente};
+    \draw[ixtiTeal, thick, decorate, decoration={brace, amplitude=8pt, mirror}] (-3.2,-3.5) -- (7.0,-3.5) node[midway, below=10pt, font=\small\bfseries\color{ixtiTeal}] {T\'u decides cu\'ando usarlos};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Ubicaci\'on de cada archivo}
   \begin{table}
-    \centering
-    \begin{tabular}{@{}lll@{}}
+    \centering\small
+    \rowcolors{2}{ixtiDark!5}{white}
+    \begin{tabular}{@{}llll@{}}
       \toprule
-      \textbf{Primitiva} & \textbf{Archivo} & \textbf{Cuándo usar} \\
+      \textcolor{ixtiTeal}{\textbf{Tipo}} & \textcolor{ixtiTeal}{\textbf{Archivo}} & \textcolor{ixtiTeal}{\textbf{Ubicaci\'on}} & \textcolor{ixtiTeal}{\textbf{Se activa}} \\
       \midrule
-      Instructions & \texttt{copilot-instructions.md} & Reglas globales siempre activas \\
-      File Instructions & \texttt{*.instructions.md} & Reglas por tipo de archivo \\
-      Prompts & \texttt{*.prompt.md} & Tareas reutilizables (comando /) \\
-      Agents & \texttt{*.agent.md} & Roles especializados \\
-      Skills & \texttt{SKILL.md} & Flujos con plantillas \\
+      Instructions & \texttt{copilot-instructions.md} & \texttt{.github/} & Siempre \\
+      File Instr. & \texttt{*.instructions.md} & \texttt{.github/instructions/} & Por patr\'on \\
+      Prompts & \texttt{*.prompt.md} & \texttt{.github/prompts/} & Comando \texttt{/} \\
+      Agents & \texttt{*.agent.md} & \texttt{.github/agents/} & Selector \\
+      Skills & \texttt{SKILL.md} & \texttt{.github/skills/\textless name\textgreater/} & Comando \texttt{/} \\
       \bottomrule
     \end{tabular}
   \end{table}
 
-  \vspace{1em}
-  Todas viven en la carpeta \texttt{.github/}
+  \vspace{0.5em}
+  \begin{quoteblock}
+    \small Todo vive en \texttt{.github/}. Se versiona con Git. Se comparte con el equipo.\\
+    \textbf{Tus reglas viajan con tu c\'odigo.}
+  \end{quoteblock}
 \end{frame}
 
 % ============================================================
-\section{Instructions: Las Reglas del Juego}
+\sectionslide{Instructions}{Las reglas del juego que Copilot siempre respeta}
 % ============================================================
 
 \begin{frame}[fragile]{Instrucciones Globales}
-  \texttt{.github/copilot-instructions.md} --- se aplica a \textbf{todo} el proyecto.
+  \framesubtitle{\texttt{.github/copilot-instructions.md} --- el cerebro del proyecto}
 
-  \begin{lstlisting}[language=markdown]
+  \begin{lstlisting}
 # Project Guidelines
 
 ## Architecture
@@ -223,42 +599,72 @@ Each entity lives in its own package under app/.
 - All routers use APIRouter with prefix and tags
 - Standard CRUD: GET /, GET /{id}, POST /, PUT /{id}, DELETE /{id}
 - Return Pydantic schemas, never raw ORM objects
-- Use module-level custom exceptions
+- Use module-level custom exceptions, not HTTPException
+
+## Build and Test
+  pytest tests/ -v
+  docker compose up --build
   \end{lstlisting}
 
-  \begin{alertblock}{Resultado}
-    Copilot \textbf{siempre} sigue estas reglas, sin que se lo pidas cada vez.
-  \end{alertblock}
+  \vspace{0.2em}
+  \begin{impactbox}
+    \centering\small
+    \textbf{Resultado:} Copilot \textbf{siempre} sigue estas reglas. No tienes que repetirlas en cada conversaci\'on.
+  \end{impactbox}
 \end{frame}
 
 \begin{frame}[fragile]{Instrucciones por Archivo}
-  Se activan solo cuando trabajas en archivos que coinciden con \texttt{applyTo}.
+  \framesubtitle{Se activan solo cuando tocas archivos que coinciden}
 
-  \begin{lstlisting}[language=yaml]
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiDark!3, colframe=ixtiTeal, title={\textcolor{white}{\faPython\ python-api}}, fonttitle=\tiny\bfseries\ttfamily]
+        \begin{lstlisting}[language=yaml, basicstyle=\ttfamily\fontsize{5}{6}\selectfont]
 ---
-description: "Use when writing Python files..."
+description: "Use when writing Python files"
 applyTo: "**/*.py"
 ---
-  \end{lstlisting}
-
-  \begin{lstlisting}[language=yaml]
+        \end{lstlisting}
+        \vspace{-0.5em}
+        \scriptsize
+        \begin{itemize}
+          \item[\textcolor{ixtiGreen}{\faCheck}] Type hints obligatorios
+          \item[\textcolor{ixtiGreen}{\faCheck}] Async/await para DB
+          \item[\textcolor{ixtiGreen}{\faCheck}] SQLAlchemy 2.0 style
+          \item[\textcolor{ixtiGreen}{\faCheck}] Orden de imports
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiDark!3, colframe=ixtiTeal, title={\textcolor{white}{\faVial\ testing}}, fonttitle=\tiny\bfseries\ttfamily]
+        \begin{lstlisting}[language=yaml, basicstyle=\ttfamily\fontsize{5}{6}\selectfont]
 ---
-description: "Use when writing test files..."
+description: "Use when writing test files"
 applyTo: "tests/**/*.py"
 ---
-  \end{lstlisting}
+        \end{lstlisting}
+        \vspace{-0.5em}
+        \scriptsize
+        \begin{itemize}
+          \item[\textcolor{ixtiGreen}{\faCheck}] pytest + asyncio
+          \item[\textcolor{ixtiGreen}{\faCheck}] httpx AsyncClient
+          \item[\textcolor{ixtiGreen}{\faCheck}] 6 tests por CRUD
+          \item[\textcolor{ixtiGreen}{\faCheck}] Naming convention
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
 
-  \begin{block}{Ventaja}
-    Las reglas de testing no ``contaminan'' el contexto cuando estás editando código de la app.
-  \end{block}
+  \vspace{0.5em}
+  \centering\small\textcolor{ixtiDark}{Las reglas de testing \textbf{no se cargan} cuando editas c\'odigo de la app, y viceversa. \textcolor{ixtiGreen}{\faLeaf\ Contexto limpio.}}
 \end{frame}
 
 % ============================================================
-\section{Prompts: Acciones Reutilizables}
+\sectionslide{Prompts}{Tareas reutilizables con un solo comando}
 % ============================================================
 
-\begin{frame}[fragile]{¿Qué es un Prompt?}
-  Un archivo \texttt{.prompt.md} que aparece como comando \texttt{/} en el chat.
+\begin{frame}[fragile]{Qu\'e es un Prompt}
+  \framesubtitle{Una receta que ejecutas desde el chat con \texttt{/}}
 
   \begin{lstlisting}[language=yaml]
 ---
@@ -271,41 +677,94 @@ Create all 7 files under app/<entity_name>/.
 Follow the patterns from app/users/ as reference.
   \end{lstlisting}
 
-  \vspace{1em}
-  \textbf{Uso:} Escribes \texttt{/new-crud} → ``Category con name:str'' → 7 archivos generados.
+  \vspace{0.5em}
+  \centering
+  \begin{tikzpicture}
+    \node[draw=ixtiTeal, fill=ixtiTeal!10, rounded corners=6pt, align=center, font=\small, inner sep=8pt] (input) {Escribes: \texttt{\textbf{/new-crud}} \\ \textit{``Category con name:str''}};
+    \node[draw=ixtiGreen!70!black, fill=ixtiGreen!10, rounded corners=6pt, align=center, font=\small, inner sep=8pt, right=2cm of input] (output) {\textbf{7 archivos} generados \\ + registro en \texttt{main.py}};
+    \draw[-{Stealth[length=8pt]}, ixtiGreen, line width=2.5pt] (input) -- node[above, font=\footnotesize\color{ixtiDark}] {\faMagic} (output);
+  \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Nuestros Prompts}
-  \begin{table}
-    \centering
-    \begin{tabular}{@{}lp{8cm}@{}}
-      \toprule
-      \textbf{Comando} & \textbf{Qué hace} \\
-      \midrule
-      \texttt{/new-crud} & Genera módulo CRUD completo (7 archivos + registro en main.py) \\
-      \texttt{/generate-tests} & Crea tests para un módulo existente \\
-      \texttt{/run-tests} & Ejecuta pytest y reporta resultados \\
-      \texttt{/deploy} & Construye y despliega con Docker Compose \\
-      \bottomrule
-    \end{tabular}
-  \end{table}
+\begin{frame}{Nuestros 4 Prompts}
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiGreen!5, colframe=ixtiGreen!70!black, title={\texttt{/new-crud}}, fonttitle=\small\bfseries\ttfamily, coltitle=white]
+        \small
+        \faPlus\ Genera m\'odulo CRUD completo\\
+        7 archivos + registro en main.py\\[4pt]
+        \textcolor{ixtiLightGray}{\footnotesize Ejemplo: ``Product con name, price, sku''}
+      \end{tcolorbox}
 
-  \vspace{1em}
-  \begin{block}{Tip}
-    Los prompts pueden especificar qué agente usan y qué herramientas necesitan.
-  \end{block}
+      \vspace{0.2em}
+      \begin{tcolorbox}[colback=ixtiGreen!5, colframe=ixtiGreen!70!black, title={\texttt{/generate-tests}}, fonttitle=\small\bfseries\ttfamily, coltitle=white]
+        \small
+        \faVial\ Crea tests para un m\'odulo\\
+        6 tests est\'andar por CRUD\\[4pt]
+        \textcolor{ixtiLightGray}{\footnotesize Ejemplo: ``users''}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiTeal!5, colframe=ixtiTeal, title={\texttt{/run-tests}}, fonttitle=\small\bfseries\ttfamily, coltitle=white]
+        \small
+        \faPlay\ Ejecuta pytest completo\\
+        Reporta passed/failed\\[4pt]
+        \textcolor{ixtiLightGray}{\footnotesize Instala dependencias si faltan}
+      \end{tcolorbox}
+
+      \vspace{0.2em}
+      \begin{tcolorbox}[colback=ixtiTeal!5, colframe=ixtiTeal, title={\texttt{/deploy}}, fonttitle=\small\bfseries\ttfamily, coltitle=white]
+        \small
+        \faDocker\ Docker Compose build + up\\
+        Verifica health checks\\[4pt]
+        \textcolor{ixtiLightGray}{\footnotesize Prueba el endpoint de salud}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 % ============================================================
-\section{Agents: Roles Especializados}
+\sectionslide{Agents}{Personalidades con roles y herramientas limitadas}
 % ============================================================
 
-\begin{frame}[fragile]{¿Qué es un Agent?}
-  Una \textbf{personalidad} con herramientas limitadas y un rol específico.
+\begin{frame}{Por qu\'e limitar herramientas}
+  \framesubtitle{Porque con un gran poder viene una gran responsabilidad}
 
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiTeal!5, colframe=ixtiTeal, title={\textcolor{white}{\faCode\ api-developer}}, fonttitle=\bfseries, top=3pt, bottom=3pt]
+        \small\textbf{Herramientas:} read, edit, search, execute\\[4pt]
+        \begin{itemize}\setlength{\itemsep}{0pt}
+          \item[\textcolor{ixtiGreen}{\faCheck}] Crea m\'odulos y endpoints
+          \item[\textcolor{ixtiGreen}{\faCheck}] Edita c\'odigo de la app
+          \item[\textcolor{ixtiGreen}{\faCheck}] Ejecuta comandos
+          \item[\textcolor{ixtiGreen}{\faCheck}] Sigue la arquitectura modular
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiGreen!5, colframe=ixtiGreen!70!black, title={\textcolor{white}{\faVial\ tester}}, fonttitle=\bfseries, top=3pt, bottom=3pt]
+        \small\textbf{Herramientas:} read, search, execute\\[4pt]
+        \begin{itemize}\setlength{\itemsep}{0pt}
+          \item[\textcolor{ixtiGreen}{\faCheck}] Escribe tests
+          \item[\textcolor{ixtiGreen}{\faCheck}] Corre pytest
+          \item[\textcolor{red!60}{\faBan}] \textbf{NO edita c\'odigo de la app}
+          \item[\textcolor{ixtiGreen}{\faCheck}] Reporta fallos
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.1em}
+  \begin{quoteblock}[fontupper=\footnotesize\itshape\color{ixtiDark}, top=4pt, bottom=4pt]
+    Si un test falla, el agente \texttt{tester} arregla el \textbf{test}, no la app. Eso es separaci\'on de responsabilidades.
+  \end{quoteblock}
+\end{frame}
+
+\begin{frame}[fragile]{Anatom\'ia de un Agente}
   \begin{lstlisting}[language=yaml]
 ---
-description: "Use when building API endpoints..."
+description: "Use when building API endpoints, creating modules..."
 tools: [read, edit, search, execute]
 ---
 You are an expert FastAPI backend developer.
@@ -314,206 +773,353 @@ You are an expert FastAPI backend developer.
 - ALWAYS follow the modular architecture
 - NEVER use HTTPException directly in services
 - NEVER return raw ORM objects from routes
+- ALWAYS use AsyncSession for database operations
+
+## Workflow
+1. Read existing modules to understand patterns
+2. Follow the exact same structure for new code
+3. Register new routers in main.py
   \end{lstlisting}
 
-  \begin{alertblock}{Clave}
-    Al limitar las herramientas, el agente se enfoca en lo que sabe hacer.
-  \end{alertblock}
+  \centering\small\textcolor{ixtiTeal}{\faInfoCircle\ El \texttt{description} es lo m\'as importante --- es c\'omo otros agentes lo encuentran.}
 \end{frame}
 
-\begin{frame}{Nuestros Agentes}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      \textbf{\faCode\ api-developer}
-      \begin{itemize}
-        \item Crea endpoints y módulos
-        \item Puede leer, editar, buscar y ejecutar
-        \item Sigue la arquitectura modular
-      \end{itemize}
+% ============================================================
+\sectionslide{Skills}{Flujos complejos con plantillas y referencias}
+% ============================================================
+
+\begin{frame}{Skill vs Prompt}
+  \framesubtitle{Ambos aparecen con \texttt{/} pero son muy diferentes}
+
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiGreen!5, colframe=ixtiGreen!70!black, title={\textcolor{white}{\faComment\ Prompt}}, fonttitle=\bfseries]
+        \small
+        \begin{itemize}
+          \item Un archivo \texttt{.prompt.md}
+          \item Una tarea simple
+          \item Instrucciones inline
+          \item Sin archivos de soporte
+        \end{itemize}
+        \vspace{0.3em}
+        \centering\textcolor{ixtiLightGray}{\footnotesize ``Genera tests para users''}
+      \end{tcolorbox}
     \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{\faVial\ tester}
-      \begin{itemize}
-        \item Escribe y corre tests
-        \item Puede leer, buscar y ejecutar
-        \item \textbf{NO puede editar código de la app}
-      \end{itemize}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiTeal!5, colframe=ixtiTeal, title={\textcolor{white}{\faCogs\ Skill}}, fonttitle=\bfseries]
+        \small
+        \begin{itemize}
+          \item Una \textbf{carpeta} con \texttt{SKILL.md}
+          \item Flujo multi-paso
+          \item Plantillas y referencias
+          \item Carga progresiva
+        \end{itemize}
+        \vspace{0.3em}
+        \centering\textcolor{ixtiLightGray}{\footnotesize ``Genera m\'odulo + tests + registro''}
+      \end{tcolorbox}
     \end{column}
   \end{columns}
 
-  \vspace{1.5em}
+  \vspace{0.3em}
   \centering
-  El tester no puede ``arreglar'' un test cambiando el código de la app.\\
-  Solo puede arreglar el test.
+  \begin{tikzpicture}
+    \node[draw=ixtiDark, fill=ixtiDark!5, rounded corners, inner sep=8pt, font=\small] {
+      \textbf{Regla:} Tiene plantilla o script \(\to\) \textcolor{ixtiTeal}{\textbf{Skill}}. \quad Solo texto \(\to\) \textcolor{ixtiGreen!70!black}{\textbf{Prompt}}.
+    };
+  \end{tikzpicture}
 \end{frame}
 
-% ============================================================
-\section{Skills: Flujos Complejos}
-% ============================================================
+\begin{frame}{Nuestro Skill: CRUD Generator}
+  \framesubtitle{5 pasos automatizados con plantillas de referencia}
 
-\begin{frame}[fragile]{¿Qué es un Skill?}
-  Un flujo de trabajo \textbf{multi-paso} con archivos de referencia.
+  \centering
+  \begin{tikzpicture}[
+    step/.style={draw=ixtiTeal, fill=ixtiTeal!8, rounded corners=8pt, minimum width=2.2cm, minimum height=1.4cm, align=center, font=\scriptsize, line width=1pt},
+    arrow/.style={-{Stealth[length=5pt]}, ixtiGreen, line width=1.5pt}
+  ]
+    \node[step] (s1) at (0,0) {\textcolor{ixtiTeal}{\faKeyboard}\\[3pt]\textbf{1. Input}\\Entidad};
+    \node[step] (s2) at (2.7,0) {\textcolor{ixtiTeal}{\faFileCode}\\[3pt]\textbf{2. Plantillas}\\templates};
+    \node[step] (s3) at (5.4,0) {\textcolor{ixtiTeal}{\faCubes}\\[3pt]\textbf{3. Genera}\\7 archivos};
+    \node[step] (s4) at (8.1,0) {\textcolor{ixtiTeal}{\faPlug}\\[3pt]\textbf{4. Registra}\\main.py};
+    \node[step] (s5) at (10.8,0) {\textcolor{ixtiTeal}{\faVial}\\[3pt]\textbf{5. Tests}\\patterns};
 
-  \begin{lstlisting}
-.github/skills/crud-generator/
-  SKILL.md                    # Instrucciones del skill
-  references/
-    templates.md              # Plantillas de codigo
-    test-patterns.md          # Patrones de tests
-  \end{lstlisting}
+    \draw[arrow] (s1) -- (s2);
+    \draw[arrow] (s2) -- (s3);
+    \draw[arrow] (s3) -- (s4);
+    \draw[arrow] (s4) -- (s5);
+  \end{tikzpicture}
 
   \vspace{0.5em}
-  El agente carga las plantillas \textbf{solo cuando las necesita} (carga progresiva).
+  \begin{tcolorbox}[colback=ixtiDark!3, colframe=ixtiDark, left=5pt, right=5pt]
+    \centering\small\ttfamily
+    .github/skills/crud-generator/\\
+    \textcolor{ixtiTeal}{SKILL.md} \quad \textcolor{ixtiGreen!70!black}{references/templates.md} \quad \textcolor{ixtiGreen!70!black}{references/test-patterns.md}
+  \end{tcolorbox}
 
-  \begin{block}{Skill vs Prompt}
-    \textbf{Prompt:} Una tarea simple con instrucciones inline. \\
-    \textbf{Skill:} Un flujo complejo con archivos de soporte.
-  \end{block}
-\end{frame}
-
-\begin{frame}{CRUD Generator: Paso a Paso}
-  \begin{enumerate}
-    \item \textbf{Recibe} nombre de entidad y campos
-    \item \textbf{Carga} plantillas de \texttt{references/templates.md}
-    \item \textbf{Genera} 7 archivos del módulo
-    \item \textbf{Registra} el router en \texttt{main.py}
-    \item \textbf{Genera} tests usando \texttt{references/test-patterns.md}
-    \item \textbf{Verifica} que no haya errores
-  \end{enumerate}
-
-  \vspace{1em}
-  \begin{alertblock}{Resultado}
-    Un módulo nuevo completo, con tests, registrado y listo para usar.\\
-    Todo en un solo comando.
-  \end{alertblock}
+  \vspace{0.3em}
+  \small
+  \begin{itemize}
+    \item \texttt{SKILL.md} --- Instrucciones del flujo, descripci\'on y variables de entrada
+    \item \texttt{templates.md} --- Plantillas de c\'odigo para los 7 archivos del m\'odulo
+    \item \texttt{test-patterns.md} --- Patrones est\'andar de testing (6 tests por CRUD)
+  \end{itemize}
 \end{frame}
 
 % ============================================================
-\section{Demo en Vivo}
+\sectionslide{Demo en Vivo}{De cero a producci\'on en minutos}
 % ============================================================
 
-\begin{frame}{Demo: Flujo Completo}
-  \begin{enumerate}
-    \item Abrir el proyecto en VS Code con Copilot
-    \item Mostrar la API funcionando (\texttt{/docs})
-    \item Ejecutar \texttt{/new-crud} → ``Category con name:str, description:str|None''
-    \item Ver los archivos generados
-    \item Ejecutar \texttt{/generate-tests} → ``categories''
-    \item Ejecutar \texttt{/run-tests} → ver resultados
-    \item Ejecutar \texttt{/deploy} → Docker Compose
-  \end{enumerate}
+\begin{frame}{Demo: El Flujo Completo}
+  \begin{center}
+    \begin{tikzpicture}[
+      demobox/.style={draw=ixtiTeal, fill=white, rounded corners=6pt, minimum width=10cm, minimum height=0.9cm, align=left, font=\small, inner xsep=10pt},
+      num/.style={circle, draw=ixtiGreen, fill=ixtiGreen, text=white, font=\small\bfseries, minimum size=0.6cm}
+    ]
+      \node[num] (n1) at (-5.8, 2.4) {1};
+      \node[demobox, anchor=west] at (-5.2, 2.4) {\faDocker\ Mostrar la API funcionando: \texttt{docker compose up}};
 
-  \vspace{1em}
-  \centering
-  \textit{De una idea a producción sin escribir código manualmente.}
+      \node[num] (n2) at (-5.8, 1.2) {2};
+      \node[demobox, anchor=west] at (-5.2, 1.2) {\faScroll\ Mostrar \texttt{copilot-instructions.md} y explicar cada secci\'on};
+
+      \node[num] (n3) at (-5.8, 0) {3};
+      \node[demobox, anchor=west] at (-5.2, 0) {\faMagic\ Ejecutar \texttt{/new-crud}: ``Category con name y description''};
+
+      \node[num] (n4) at (-5.8, -1.2) {4};
+      \node[demobox, anchor=west] at (-5.2, -1.2) {\faVial\ Ejecutar \texttt{/generate-tests}: ``categories''};
+
+      \node[num] (n5) at (-5.8, -2.4) {5};
+      \node[demobox, anchor=west] at (-5.2, -2.4) {\faPlay\ Ejecutar \texttt{/run-tests} y ver resultados en verde};
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{-0.2em}
+  \centering\footnotesize\textcolor{ixtiDark}{\textit{Nuevo m\'odulo. Con tests. Listo para producci\'on. Sin escribir una l\'inea.}}
 \end{frame}
 
 % ============================================================
-\section{Mejores Prácticas}
+\sectionslide{Mejores Pr\'acticas}{Lo que separa a un usuario casual de un profesional}
 % ============================================================
 
 \begin{frame}{Tips para Instrucciones Efectivas}
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      \textbf{\faCheck\ Hacer}
-      \begin{itemize}
-        \item Ser específico y conciso
-        \item Incluir ejemplos de código
-        \item Un archivo = una preocupación
-        \item Keywords en \texttt{description}
-        \item Actualizar cuando cambien prácticas
-      \end{itemize}
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiGreen!5, colframe=ixtiGreen!70!black, title={\textcolor{white}{\faCheck\ Hacer}}, fonttitle=\bfseries]
+        \small
+        \begin{itemize}
+          \item[\textcolor{ixtiGreen}{\faCheck}] Ser espec\'ifico y conciso
+          \item[\textcolor{ixtiGreen}{\faCheck}] Incluir ejemplos de c\'odigo
+          \item[\textcolor{ixtiGreen}{\faCheck}] Un archivo = una preocupaci\'on
+          \item[\textcolor{ixtiGreen}{\faCheck}] Keywords en \texttt{description}
+          \item[\textcolor{ixtiGreen}{\faCheck}] Actualizar con tu proyecto
+          \item[\textcolor{ixtiGreen}{\faCheck}] Versionar en Git
+        \end{itemize}
+      \end{tcolorbox}
     \end{column}
-    \begin{column}{0.5\textwidth}
-      \textbf{\faTimes\ Evitar}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=red!3, colframe=red!40!black, title={\textcolor{white}{\faTimes\ Evitar}}, fonttitle=\bfseries]
+        \small
+        \begin{itemize}
+          \item[\textcolor{red!60}{\faTimes}] Instrucciones vagas
+          \item[\textcolor{red!60}{\faTimes}] Todo en un solo archivo
+          \item[\textcolor{red!60}{\faTimes}] Repetir lo que un linter ya hace
+          \item[\textcolor{red!60}{\faTimes}] \texttt{applyTo: "**"} sin necesidad
+          \item[\textcolor{red!60}{\faTimes}] Descripciones gen\'ericas
+          \item[\textcolor{red!60}{\faTimes}] Copiar el README entero
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.1em}
+  \begin{quoteblock}[fontupper=\footnotesize\itshape\color{ixtiDark}, top=4pt, bottom=4pt]
+    El \texttt{description} es la puerta de entrada. Si las palabras clave no est\'an ah\'i, el agente nunca encontrar\'a tu instrucci\'on.
+  \end{quoteblock}
+\end{frame}
+
+\begin{frame}{La Pir\'amide de Personalizaci\'on}
+  \centering
+  \begin{tikzpicture}[scale=0.7, every node/.style={transform shape}]
+    % Base
+    \fill[ixtiDark!15] (-6,0) -- (6,0) -- (4.5,1.6) -- (-4.5,1.6) -- cycle;
+    \node[font=\small\bfseries\color{ixtiDark}, align=center] at (0,0.8) {\faScroll\ \texttt{copilot-instructions.md}\\[-2pt]\tiny Siempre activo | Todo el proyecto};
+
+    % Level 2
+    \fill[ixtiTeal!20] (-4.5,1.8) -- (4.5,1.8) -- (3,3.4) -- (-3,3.4) -- cycle;
+    \node[font=\small\bfseries\color{ixtiTeal}, align=center] at (0,2.6) {\faFileAlt\ \texttt{.instructions.md}\\[-2pt]\tiny Por tipo de archivo | applyTo};
+
+    % Level 3
+    \fill[ixtiGreen!20] (-3,3.6) -- (3,3.6) -- (1.8,5.2) -- (-1.8,5.2) -- cycle;
+    \node[font=\small\bfseries\color{ixtiGreen!70!black}, align=center] at (0,4.4) {\faCogs\ Skills\\[-2pt]\tiny Flujos con plantillas};
+
+    % Top
+    \fill[ixtiGreen!40] (-1.8,5.4) -- (1.8,5.4) -- (0,6.8) -- cycle;
+    \node[font=\small\bfseries\color{ixtiDark}, align=center] at (0,6) {\faRobot\\[-2pt]\tiny Agents};
+
+    % Arrow
+    \draw[{Stealth[length=8pt]}-{Stealth[length=8pt]}, ixtiLightGray, line width=1.5pt] (7,0.5) -- (7,6.5);
+    \node[font=\tiny\color{ixtiLightGray}, rotate=90] at (7.5,1.5) {M\'as general};
+    \node[font=\tiny\color{ixtiLightGray}, rotate=90] at (7.5,5.5) {M\'as espec\'ifico};
+  \end{tikzpicture}
+\end{frame}
+
+% ============================================================
+\sectionslide{El Futuro Es Ahora}{Est\'as listo para lo que viene}
+% ============================================================
+
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[ixtiBlack] (current page.south west) rectangle (current page.north east);
+    \node[anchor=center, text=white, font=\fontsize{24}{30}\selectfont\bfseries, text width=13cm, align=center] at ([yshift=2cm]current page.center) {
+      En 2020, saber programar era la ventaja.
+    };
+    \node[anchor=center, text=ixtiGreen, font=\fontsize{24}{30}\selectfont\bfseries, text width=13cm, align=center] at ([yshift=0cm]current page.center) {
+      En 2026, saber \textit{guiar a la IA} es la ventaja.
+    };
+    \fill[ixtiGreen, opacity=0.8] ([yshift=-1.5cm, xshift=-4cm]current page.center) rectangle ([yshift=-1.45cm, xshift=4cm]current page.center);
+    \node[anchor=center, text=ixtiLightGray, font=\normalsize, text width=12cm, align=center] at ([yshift=-3cm]current page.center) {
+      Los desarrolladores que dominen estas herramientas\\
+      no ser\'an reemplazados. Ser\'an \textbf{irremplazables}.
+    };
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{El panorama que viene}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
       \begin{itemize}
-        \item Instrucciones vagas
-        \item Todo en un solo archivo
-        \item Duplicar lo que ya dice un linter
-        \item \texttt{applyTo: "**"} sin necesidad
-        \item Descripciones genéricas
+        \item \textcolor{ixtiTeal}{\textbf{Agentes aut\'onomos}} que planifican, ejecutan y validan
+        \item \textcolor{ixtiTeal}{\textbf{Multi-agentes}} que se delegan trabajo entre s\'i
+        \item \textcolor{ixtiTeal}{\textbf{Context awareness}} --- la IA entiende TODO tu proyecto
+        \item \textcolor{ixtiTeal}{\textbf{Generaci\'on end-to-end}} --- de idea a deploy
+        \item \textcolor{ixtiTeal}{\textbf{Custom workflows}} --- cada equipo con su propio flujo
       \end{itemize}
+
+      \vspace{0.2em}
+      \centering\footnotesize\textcolor{ixtiTeal}{\textit{La pregunta no es si vas a usar IA para programar. Es \textbf{cu\'ando vas a empezar a usarla bien}.}}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \centering
+      \begin{tikzpicture}
+        % Timeline
+        \draw[ixtiLightGray, line width=2pt] (0,0) -- (0,-5.5);
+
+        \node[draw=ixtiLightGray, fill=ixtiLightGray!10, rounded corners, font=\scriptsize, right, inner sep=4pt, text width=3cm] at (0.3, 0) {\textbf{2022}\\Autocompletado b\'asico};
+        \fill[ixtiLightGray] (0,0) circle (4pt);
+
+        \node[draw=ixtiTeal, fill=ixtiTeal!10, rounded corners, font=\scriptsize, right, inner sep=4pt, text width=3cm] at (0.3, -1.5) {\textbf{2024}\\Chat + agentes simples};
+        \fill[ixtiTeal] (0,-1.5) circle (4pt);
+
+        \node[draw=ixtiGreen!70!black, fill=ixtiGreen!10, rounded corners, font=\scriptsize\bfseries, right, inner sep=4pt, text width=3cm] at (0.3, -3) {\textbf{2026} \textcolor{ixtiGreen}{\faArrowLeft}\\Custom agents + skills};
+        \fill[ixtiGreen] (0,-3) circle (5pt);
+
+        \node[draw=ixtiDark, fill=ixtiDark!10, rounded corners, font=\scriptsize, right, inner sep=4pt, text width=3cm] at (0.3, -4.5) {\textbf{2027+}\\Agentes aut\'onomos};
+        \fill[ixtiDark] (0,-4.5) circle (4pt);
+      \end{tikzpicture}
     \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}{La Pirámide de Personalización}
-  \centering
-  \begin{tikzpicture}[scale=0.9]
-    \node[draw, fill=blue!20, minimum width=12cm, minimum height=1.2cm] at (0,0) {\textbf{copilot-instructions.md} --- Siempre activo, todo el proyecto};
-    \node[draw, fill=blue!30, minimum width=9cm, minimum height=1.2cm] at (0,1.5) {\textbf{.instructions.md} --- Por tipo de archivo};
-    \node[draw, fill=blue!40, minimum width=6cm, minimum height=1.2cm] at (0,3) {\textbf{Skills} --- Flujos bajo demanda};
-    \node[draw, fill=blue!50, minimum width=4cm, minimum height=1.2cm, text=white] at (0,4.5) {\textbf{Agents / Prompts}};
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[ixtiDark] (current page.south west) rectangle (current page.north east);
+    \node[anchor=center, text=ixtiGreen, font=\fontsize{18}{22}\selectfont\bfseries, text width=13cm, align=center] at ([yshift=3.8cm]current page.center) {
+      Reflexi\'on final
+    };
+    \fill[ixtiGreen, opacity=0.5] ([yshift=2.8cm, xshift=-3cm]current page.center) rectangle ([yshift=2.85cm, xshift=3cm]current page.center);
+    \node[anchor=center, text=white, font=\fontsize{14}{19}\selectfont, text width=12cm, align=center] at ([yshift=-0.3cm]current page.center) {
+      Hace 10 a\~nos, aprender a programar requer\'ia\\
+      meses de estudio antes de crear algo \'util.\\[10pt]
+      Hoy, con las herramientas correctas,\\
+      \textbf{puedes ser productivo desde el d\'ia uno}.\\[10pt]
+      La barrera de entrada baj\'o.\\
+      Pero la barrera de la \textit{excelencia} sigue ah\'i.\\[10pt]
+      \textcolor{ixtiGreen}{Este curso es tu atajo.}
+    };
   \end{tikzpicture}
-
-  \vspace{1em}
-  De abajo hacia arriba: de más general a más específico.
 \end{frame}
 
 % ============================================================
-\section{Ejercicio Práctico}
+\sectionslide{Ejercicio Pr\'actico}{Tu turno de crear algo}
 % ============================================================
 
-\begin{frame}{Ejercicio: Crea tu Propio Módulo}
-  \textbf{Objetivo:} Usar las herramientas del curso para crear un módulo de ``Categories''.
+\begin{frame}{Ejercicio: Crea tu Propio M\'odulo}
+  \begin{tcolorbox}[colback=ixtiGreen!5, colframe=ixtiGreen!70!black, title={\textcolor{white}{\faTasks\ Tu misi\'on}}, fonttitle=\bfseries]
+    Usar las herramientas del curso para crear un m\'odulo de \textbf{``Categories''} desde cero.
+  \end{tcolorbox}
 
-  \begin{enumerate}
+  \vspace{0.3em}
+  \begin{enumerate}\small
     \item Abre el chat de Copilot en VS Code
-    \item Usa \texttt{/new-crud} con: ``Category con name:str, description:str|None, is\_active:bool''
-    \item Verifica que se crearon los 7 archivos en \texttt{app/categories/}
-    \item Usa \texttt{/generate-tests} con: ``categories''
-    \item Usa \texttt{/run-tests} para validar
-    \item Abre \texttt{/docs} y prueba los nuevos endpoints
+    \item Ejecuta \texttt{/new-crud} con: \textit{``Category con name:str, description:str|None, is\_active:bool''}
+    \item Verifica los 7 archivos en \texttt{app/categories/}
+    \item Ejecuta \texttt{/generate-tests} con: \textit{``categories''}
+    \item Ejecuta \texttt{/run-tests} para validar
+    \item Abre \texttt{localhost:8000/docs} y prueba los endpoints
   \end{enumerate}
 
-  \vspace{0.5em}
-  \begin{block}{Bonus}
-    Modifica \texttt{copilot-instructions.md} para agregar una regla nueva y comprueba que Copilot la sigue.
-  \end{block}
+  \vspace{0.2em}
+  \begin{impactbox}[top=4pt, bottom=4pt]
+    \centering\footnotesize
+    \textbf{Bonus:} Agrega una regla nueva a \texttt{copilot-instructions.md} y comprueba que Copilot la sigue en la siguiente generaci\'on.
+  \end{impactbox}
 \end{frame}
 
 % ============================================================
-\section{Conclusión}
+\sectionslide{Conclusi\'on}{Lo que te llevas hoy}
 % ============================================================
 
-\begin{frame}{Resumen}
+\begin{frame}{Resumen Ejecutivo}
   \begin{table}
     \centering
-    \begin{tabular}{@{}ll@{}}
+    \rowcolors{2}{ixtiDark!5}{white}
+    \begin{tabular}{@{}lll@{}}
       \toprule
-      \textbf{Primitiva} & \textbf{Para qué sirve} \\
+      \textcolor{ixtiTeal}{\textbf{Primitiva}} & \textcolor{ixtiTeal}{\textbf{Funci\'on}} & \textcolor{ixtiTeal}{\textbf{Analog\'ia}} \\
       \midrule
-      Workspace Instructions & Reglas globales del proyecto \\
-      File Instructions & Reglas específicas por tipo de archivo \\
-      Prompts & Tareas reutilizables con un clic \\
-      Agents & Roles con herramientas limitadas \\
-      Skills & Flujos complejos con plantillas \\
+      Instructions & Reglas globales del proyecto & La constituci\'on \\
+      File Instructions & Reglas por tipo de archivo & Leyes espec\'ificas \\
+      Prompts & Tareas con un clic & Recetas de cocina \\
+      Agents & Roles especializados & Empleados expertos \\
+      Skills & Flujos con plantillas & Manuales de procedimiento \\
       \bottomrule
     \end{tabular}
   \end{table}
 
-  \vspace{1em}
-  \centering
-  \textbf{La IA no reemplaza al desarrollador.\\Amplifica al desarrollador que sabe guiarla.}
+  \vspace{0.5em}
+  \begin{quoteblock}
+    La IA no reemplaza al desarrollador. \textbf{Amplifica} al desarrollador que sabe guiarla.
+  \end{quoteblock}
 \end{frame}
 
-\begin{frame}{Recursos}
-  \begin{itemize}
-    \item \faGithub\ Repo del curso: \url{https://github.com/tu-usuario/vibe-coder-guide}
-    \item \faBook\ Docs oficiales: \url{https://code.visualstudio.com/docs/copilot/customization}
-    \item \faFileAlt\ Custom Instructions: \url{https://code.visualstudio.com/docs/copilot/customization/custom-instructions}
-    \item \faFileAlt\ Prompt Files: \url{https://code.visualstudio.com/docs/copilot/customization/prompt-files}
-    \item \faFileAlt\ Custom Agents: \url{https://code.visualstudio.com/docs/copilot/customization/custom-agents}
-    \item \faFileAlt\ Agent Skills: \url{https://code.visualstudio.com/docs/copilot/customization/agent-skills}
-  \end{itemize}
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[ixtiBlack] (current page.south west) rectangle (current page.north east);
+    % Geometric lines
+    \foreach \i in {1,...,8} {
+      \draw[ixtiDark, line width=0.5pt, opacity=0.3] ([xshift=\i*2cm]current page.south west) -- ([xshift=\i*2cm-3cm]current page.north west);
+    }
+    \node[anchor=center, text=white, font=\fontsize{40}{48}\selectfont\bfseries] at ([yshift=2cm]current page.center) {Preguntas};
+    \fill[ixtiGreen] ([yshift=0.5cm, xshift=-3cm]current page.center) rectangle ([yshift=0.55cm, xshift=3cm]current page.center);
+    \node[anchor=center, text=ixtiLightGray, font=\large, text width=12cm, align=center] at ([yshift=-0.8cm]current page.center) {El c\'odigo del curso est\'a en el repositorio.\\Experimenta, rompe cosas, aprende.};
+    \node[anchor=south, text=ixtiLightGray, font=\small] at ([yshift=1.2cm]current page.south) {IXTI Geoespacial \(\vert\) IA \(\cdot\) Ciencia de Datos \(\cdot\) Geoespacial};
+    \node[anchor=south] at ([yshift=1.8cm]current page.south) {\includegraphics[height=1cm]{../ixti_logo.png}};
+  \end{tikzpicture}
 \end{frame}
 
-\begin{frame}
-  \centering
-  \Huge ¿Preguntas?
-
-  \vspace{2em}
-  \large ¡Gracias!
+% ============================================================
+% CLOSING SLIDE
+% ============================================================
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[ixtiBlack] (current page.south west) rectangle (current page.north east);
+    % Large logo centered
+    \node[anchor=center] at ([yshift=1cm]current page.center) {\includegraphics[height=2.5cm]{../ixti_logo.png}};
+    % Tagline
+    \node[anchor=center, text=ixtiGreen, font=\Large\bfseries] at ([yshift=-1.5cm]current page.center) {Innovaci\'on Geoespacial};
+    \node[anchor=center, text=ixtiLightGray, font=\normalsize] at ([yshift=-2.5cm]current page.center) {IA \(\cdot\) Ciencia de Datos \(\cdot\) Geoespacial};
+    % Bottom
+    \node[anchor=south, text=ixtiLightGray!50, font=\tiny] at ([yshift=0.3cm]current page.south) {\copyright\ 2026 IXTI Geoespacial. Todos los derechos reservados.};
+  \end{tikzpicture}
 \end{frame}
 
 \end{document}
