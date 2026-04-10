@@ -1,0 +1,519 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+% --- Theme ---
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+\usepackage{tcolorbox}
+\usepackage{booktabs}
+
+% --- Code style ---
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  backgroundcolor=\color{gray!10},
+  frame=single,
+  framerule=0pt,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2,
+  columns=fullflexible,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  stringstyle=\color{green!50!black},
+  commentstyle=\color{gray},
+}
+
+\lstdefinelanguage{yaml}{
+  keywords={true,false,null,yes,no},
+  sensitive=false,
+  comment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]",
+}
+
+% --- Info ---
+\title{Vibe Coder Guide}
+\subtitle{Cómo explotar al máximo GitHub Copilot\\para desarrollo de software}
+\author{Tu Nombre}
+\date{2026}
+\institute{}
+
+% ====================
+\begin{document}
+
+% --- Title ---
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% --- Agenda ---
+\begin{frame}{Agenda}
+  \tableofcontents
+\end{frame}
+
+% ============================================================
+\section{Introducción}
+% ============================================================
+
+\begin{frame}{¿Para quién es este curso?}
+  \begin{itemize}
+    \item Personas que están comenzando en desarrollo de software
+    \item Desarrolladores que quieren ser más productivos con IA
+    \item Equipos que buscan estandarizar su código
+  \end{itemize}
+
+  \vspace{1em}
+
+  \begin{alertblock}{Filosofía}
+    No se trata de que la IA escriba código por ti.\\
+    Se trata de que la IA escriba código \textbf{como tú quieres}.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{¿Qué vamos a lograr?}
+  \begin{enumerate}
+    \item Definir \textbf{reglas} que Copilot seguirá automáticamente
+    \item Crear \textbf{plantillas} reutilizables para tareas comunes
+    \item Tener \textbf{agentes especializados} (desarrollador, tester)
+    \item Generar módulos CRUD completos con un solo comando
+    \item Ejecutar tests y deployments desde el chat
+  \end{enumerate}
+
+  \vspace{1em}
+  \centering
+  \textbf{Todo sin escribir código manualmente.}
+\end{frame}
+
+\begin{frame}{El Proyecto de Ejemplo}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{API REST} con:
+      \begin{itemize}
+        \item FastAPI (Python)
+        \item PostgreSQL
+        \item SQLAlchemy 2.0
+        \item Docker Compose
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{3 Módulos CRUD:}
+      \begin{itemize}
+        \item Users (usuarios)
+        \item Products (productos)
+        \item Orders (pedidos)
+      \end{itemize}
+
+      \vspace{0.5em}
+      Cada módulo: 7 archivos, misma estructura.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+\section{Arquitectura del Proyecto}
+% ============================================================
+
+\begin{frame}[fragile]{Estructura Modular}
+  Cada entidad vive en su propia carpeta con 7 archivos:
+
+  \begin{lstlisting}[language=bash]
+app/users/
+  __init__.py      # Vacio
+  constants.py     # Mensajes de respuesta
+  exceptions.py    # Excepciones HTTP custom
+  models.py        # Modelo SQLAlchemy
+  schemas.py       # Schemas Pydantic (Create, Update, Response)
+  service.py       # Logica de negocio (CRUD)
+  routes.py        # Endpoints FastAPI
+  \end{lstlisting}
+
+  \begin{block}{¿Por qué?}
+    Si todos los módulos tienen la \textbf{misma estructura}, la IA puede generarlos automáticamente.
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo: models.py}
+  \begin{lstlisting}[language=Python]
+from datetime import datetime
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column
+from app.database import Base
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100))
+    email: Mapped[str] = mapped_column(String(255), unique=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        default_factory=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        default_factory=datetime.utcnow, onupdate=datetime.utcnow)
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Ejemplo: service.py}
+  \begin{lstlisting}[language=Python]
+async def get_all(session: AsyncSession) -> list[User]:
+    result = await session.execute(select(User))
+    return list(result.scalars().all())
+
+async def get_by_id(session: AsyncSession, user_id: int) -> User:
+    user = await session.get(User, user_id)
+    if not user:
+        raise UserNotFoundException()
+    return user
+
+async def create(session: AsyncSession, data: UserCreate) -> User:
+    user = User(**data.model_dump())
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+    return user
+  \end{lstlisting}
+\end{frame}
+
+% ============================================================
+\section{Herramientas de Personalización de Copilot}
+% ============================================================
+
+\begin{frame}{Las 5 Primitivas de Copilot}
+  \begin{table}
+    \centering
+    \begin{tabular}{@{}lll@{}}
+      \toprule
+      \textbf{Primitiva} & \textbf{Archivo} & \textbf{Cuándo usar} \\
+      \midrule
+      Instructions & \texttt{copilot-instructions.md} & Reglas globales siempre activas \\
+      File Instructions & \texttt{*.instructions.md} & Reglas por tipo de archivo \\
+      Prompts & \texttt{*.prompt.md} & Tareas reutilizables (comando /) \\
+      Agents & \texttt{*.agent.md} & Roles especializados \\
+      Skills & \texttt{SKILL.md} & Flujos con plantillas \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vspace{1em}
+  Todas viven en la carpeta \texttt{.github/}
+\end{frame}
+
+% ============================================================
+\section{Instructions: Las Reglas del Juego}
+% ============================================================
+
+\begin{frame}[fragile]{Instrucciones Globales}
+  \texttt{.github/copilot-instructions.md} --- se aplica a \textbf{todo} el proyecto.
+
+  \begin{lstlisting}[language=markdown]
+# Project Guidelines
+
+## Architecture
+This is a FastAPI REST API with PostgreSQL.
+Each entity lives in its own package under app/.
+
+## Conventions
+- All routers use APIRouter with prefix and tags
+- Standard CRUD: GET /, GET /{id}, POST /, PUT /{id}, DELETE /{id}
+- Return Pydantic schemas, never raw ORM objects
+- Use module-level custom exceptions
+  \end{lstlisting}
+
+  \begin{alertblock}{Resultado}
+    Copilot \textbf{siempre} sigue estas reglas, sin que se lo pidas cada vez.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Instrucciones por Archivo}
+  Se activan solo cuando trabajas en archivos que coinciden con \texttt{applyTo}.
+
+  \begin{lstlisting}[language=yaml]
+---
+description: "Use when writing Python files..."
+applyTo: "**/*.py"
+---
+  \end{lstlisting}
+
+  \begin{lstlisting}[language=yaml]
+---
+description: "Use when writing test files..."
+applyTo: "tests/**/*.py"
+---
+  \end{lstlisting}
+
+  \begin{block}{Ventaja}
+    Las reglas de testing no ``contaminan'' el contexto cuando estás editando código de la app.
+  \end{block}
+\end{frame}
+
+% ============================================================
+\section{Prompts: Acciones Reutilizables}
+% ============================================================
+
+\begin{frame}[fragile]{¿Qué es un Prompt?}
+  Un archivo \texttt{.prompt.md} que aparece como comando \texttt{/} en el chat.
+
+  \begin{lstlisting}[language=yaml]
+---
+description: "Generate a complete CRUD module"
+agent: "agent"
+argument-hint: "Entity name and fields"
+---
+Generate a complete CRUD module for the entity described below.
+Create all 7 files under app/<entity_name>/.
+Follow the patterns from app/users/ as reference.
+  \end{lstlisting}
+
+  \vspace{1em}
+  \textbf{Uso:} Escribes \texttt{/new-crud} → ``Category con name:str'' → 7 archivos generados.
+\end{frame}
+
+\begin{frame}{Nuestros Prompts}
+  \begin{table}
+    \centering
+    \begin{tabular}{@{}lp{8cm}@{}}
+      \toprule
+      \textbf{Comando} & \textbf{Qué hace} \\
+      \midrule
+      \texttt{/new-crud} & Genera módulo CRUD completo (7 archivos + registro en main.py) \\
+      \texttt{/generate-tests} & Crea tests para un módulo existente \\
+      \texttt{/run-tests} & Ejecuta pytest y reporta resultados \\
+      \texttt{/deploy} & Construye y despliega con Docker Compose \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vspace{1em}
+  \begin{block}{Tip}
+    Los prompts pueden especificar qué agente usan y qué herramientas necesitan.
+  \end{block}
+\end{frame}
+
+% ============================================================
+\section{Agents: Roles Especializados}
+% ============================================================
+
+\begin{frame}[fragile]{¿Qué es un Agent?}
+  Una \textbf{personalidad} con herramientas limitadas y un rol específico.
+
+  \begin{lstlisting}[language=yaml]
+---
+description: "Use when building API endpoints..."
+tools: [read, edit, search, execute]
+---
+You are an expert FastAPI backend developer.
+
+## Constraints
+- ALWAYS follow the modular architecture
+- NEVER use HTTPException directly in services
+- NEVER return raw ORM objects from routes
+  \end{lstlisting}
+
+  \begin{alertblock}{Clave}
+    Al limitar las herramientas, el agente se enfoca en lo que sabe hacer.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Nuestros Agentes}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{\faCode\ api-developer}
+      \begin{itemize}
+        \item Crea endpoints y módulos
+        \item Puede leer, editar, buscar y ejecutar
+        \item Sigue la arquitectura modular
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{\faVial\ tester}
+      \begin{itemize}
+        \item Escribe y corre tests
+        \item Puede leer, buscar y ejecutar
+        \item \textbf{NO puede editar código de la app}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{1.5em}
+  \centering
+  El tester no puede ``arreglar'' un test cambiando el código de la app.\\
+  Solo puede arreglar el test.
+\end{frame}
+
+% ============================================================
+\section{Skills: Flujos Complejos}
+% ============================================================
+
+\begin{frame}[fragile]{¿Qué es un Skill?}
+  Un flujo de trabajo \textbf{multi-paso} con archivos de referencia.
+
+  \begin{lstlisting}
+.github/skills/crud-generator/
+  SKILL.md                    # Instrucciones del skill
+  references/
+    templates.md              # Plantillas de codigo
+    test-patterns.md          # Patrones de tests
+  \end{lstlisting}
+
+  \vspace{0.5em}
+  El agente carga las plantillas \textbf{solo cuando las necesita} (carga progresiva).
+
+  \begin{block}{Skill vs Prompt}
+    \textbf{Prompt:} Una tarea simple con instrucciones inline. \\
+    \textbf{Skill:} Un flujo complejo con archivos de soporte.
+  \end{block}
+\end{frame}
+
+\begin{frame}{CRUD Generator: Paso a Paso}
+  \begin{enumerate}
+    \item \textbf{Recibe} nombre de entidad y campos
+    \item \textbf{Carga} plantillas de \texttt{references/templates.md}
+    \item \textbf{Genera} 7 archivos del módulo
+    \item \textbf{Registra} el router en \texttt{main.py}
+    \item \textbf{Genera} tests usando \texttt{references/test-patterns.md}
+    \item \textbf{Verifica} que no haya errores
+  \end{enumerate}
+
+  \vspace{1em}
+  \begin{alertblock}{Resultado}
+    Un módulo nuevo completo, con tests, registrado y listo para usar.\\
+    Todo en un solo comando.
+  \end{alertblock}
+\end{frame}
+
+% ============================================================
+\section{Demo en Vivo}
+% ============================================================
+
+\begin{frame}{Demo: Flujo Completo}
+  \begin{enumerate}
+    \item Abrir el proyecto en VS Code con Copilot
+    \item Mostrar la API funcionando (\texttt{/docs})
+    \item Ejecutar \texttt{/new-crud} → ``Category con name:str, description:str|None''
+    \item Ver los archivos generados
+    \item Ejecutar \texttt{/generate-tests} → ``categories''
+    \item Ejecutar \texttt{/run-tests} → ver resultados
+    \item Ejecutar \texttt{/deploy} → Docker Compose
+  \end{enumerate}
+
+  \vspace{1em}
+  \centering
+  \textit{De una idea a producción sin escribir código manualmente.}
+\end{frame}
+
+% ============================================================
+\section{Mejores Prácticas}
+% ============================================================
+
+\begin{frame}{Tips para Instrucciones Efectivas}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \textbf{\faCheck\ Hacer}
+      \begin{itemize}
+        \item Ser específico y conciso
+        \item Incluir ejemplos de código
+        \item Un archivo = una preocupación
+        \item Keywords en \texttt{description}
+        \item Actualizar cuando cambien prácticas
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{\faTimes\ Evitar}
+      \begin{itemize}
+        \item Instrucciones vagas
+        \item Todo en un solo archivo
+        \item Duplicar lo que ya dice un linter
+        \item \texttt{applyTo: "**"} sin necesidad
+        \item Descripciones genéricas
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{La Pirámide de Personalización}
+  \centering
+  \begin{tikzpicture}[scale=0.9]
+    \node[draw, fill=blue!20, minimum width=12cm, minimum height=1.2cm] at (0,0) {\textbf{copilot-instructions.md} --- Siempre activo, todo el proyecto};
+    \node[draw, fill=blue!30, minimum width=9cm, minimum height=1.2cm] at (0,1.5) {\textbf{.instructions.md} --- Por tipo de archivo};
+    \node[draw, fill=blue!40, minimum width=6cm, minimum height=1.2cm] at (0,3) {\textbf{Skills} --- Flujos bajo demanda};
+    \node[draw, fill=blue!50, minimum width=4cm, minimum height=1.2cm, text=white] at (0,4.5) {\textbf{Agents / Prompts}};
+  \end{tikzpicture}
+
+  \vspace{1em}
+  De abajo hacia arriba: de más general a más específico.
+\end{frame}
+
+% ============================================================
+\section{Ejercicio Práctico}
+% ============================================================
+
+\begin{frame}{Ejercicio: Crea tu Propio Módulo}
+  \textbf{Objetivo:} Usar las herramientas del curso para crear un módulo de ``Categories''.
+
+  \begin{enumerate}
+    \item Abre el chat de Copilot en VS Code
+    \item Usa \texttt{/new-crud} con: ``Category con name:str, description:str|None, is\_active:bool''
+    \item Verifica que se crearon los 7 archivos en \texttt{app/categories/}
+    \item Usa \texttt{/generate-tests} con: ``categories''
+    \item Usa \texttt{/run-tests} para validar
+    \item Abre \texttt{/docs} y prueba los nuevos endpoints
+  \end{enumerate}
+
+  \vspace{0.5em}
+  \begin{block}{Bonus}
+    Modifica \texttt{copilot-instructions.md} para agregar una regla nueva y comprueba que Copilot la sigue.
+  \end{block}
+\end{frame}
+
+% ============================================================
+\section{Conclusión}
+% ============================================================
+
+\begin{frame}{Resumen}
+  \begin{table}
+    \centering
+    \begin{tabular}{@{}ll@{}}
+      \toprule
+      \textbf{Primitiva} & \textbf{Para qué sirve} \\
+      \midrule
+      Workspace Instructions & Reglas globales del proyecto \\
+      File Instructions & Reglas específicas por tipo de archivo \\
+      Prompts & Tareas reutilizables con un clic \\
+      Agents & Roles con herramientas limitadas \\
+      Skills & Flujos complejos con plantillas \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vspace{1em}
+  \centering
+  \textbf{La IA no reemplaza al desarrollador.\\Amplifica al desarrollador que sabe guiarla.}
+\end{frame}
+
+\begin{frame}{Recursos}
+  \begin{itemize}
+    \item \faGithub\ Repo del curso: \url{https://github.com/tu-usuario/vibe-coder-guide}
+    \item \faBook\ Docs oficiales: \url{https://code.visualstudio.com/docs/copilot/customization}
+    \item \faFileAlt\ Custom Instructions: \url{https://code.visualstudio.com/docs/copilot/customization/custom-instructions}
+    \item \faFileAlt\ Prompt Files: \url{https://code.visualstudio.com/docs/copilot/customization/prompt-files}
+    \item \faFileAlt\ Custom Agents: \url{https://code.visualstudio.com/docs/copilot/customization/custom-agents}
+    \item \faFileAlt\ Agent Skills: \url{https://code.visualstudio.com/docs/copilot/customization/agent-skills}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \centering
+  \Huge ¿Preguntas?
+
+  \vspace{2em}
+  \large ¡Gracias!
+\end{frame}
+
+\end{document}
