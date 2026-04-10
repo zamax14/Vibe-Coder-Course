@@ -1,4 +1,4 @@
-# Project Guidelines — Vibe Coder API
+# Project Guidelines — Vibe Engineer API
 
 ## Architecture
 

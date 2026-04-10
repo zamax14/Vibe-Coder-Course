@@ -2,7 +2,7 @@
 
 <img src="ixti_logo.png" alt="IXTI Geoespacial" width="280"/>
 
-# Vibe Coder Guide
+# Vibe Engineer Guide
 
 ### Curso IXTI · Domina GitHub Copilot y multiplica tu productividad
 
@@ -22,7 +22,7 @@
 
 ## 🎯 ¿De qué va este curso?
 
-Este repositorio es el material práctico del curso **Vibe Coder Guide** de **IXTI Geoespacial**. Contiene una API REST de ejemplo con FastAPI + PostgreSQL que usaremos para demostrar cómo personalizar GitHub Copilot con **instrucciones, prompts, agentes y skills**.
+Este repositorio es el material práctico del curso **Vibe Engineer Guide** de **IXTI Geoespacial**. Contiene una API REST de ejemplo con FastAPI + PostgreSQL que usaremos para demostrar cómo personalizar GitHub Copilot con **instrucciones, prompts, agentes y skills**.
 
 > **La idea:** No se trata de que la IA escriba código por ti. Se trata de que escriba código **con tus reglas**, siguiendo **tu arquitectura**, y generando **módulos completos** con un solo comando.
 

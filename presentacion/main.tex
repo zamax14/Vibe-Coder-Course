@@ -84,9 +84,10 @@
 
 % --- Footline ---
 \setbeamertemplate{footline}{%
+  \rule{0pt}{0.5cm}%
   \begin{tikzpicture}[remember picture, overlay]
     \fill[ixtiBlack] (current page.south west) rectangle ([yshift=0.4cm]current page.south east);
-    \node[anchor=west, text=ixtiLightGray, font=\tiny] at ([xshift=0.5cm, yshift=0.2cm]current page.south west) {IXTI Geoespacial \(\vert\) Vibe Coder Guide 2026};
+    \node[anchor=west, text=ixtiLightGray, font=\tiny] at ([xshift=0.5cm, yshift=0.2cm]current page.south west) {IXTI Geoespacial \(\vert\) Vibe Engineer Guide 2026};
     \node[anchor=east, text=ixtiLightGray, font=\tiny] at ([xshift=-0.5cm, yshift=0.2cm]current page.south east) {\insertframenumber\,/\,\inserttotalframenumber};
     % Small logo
     \node[anchor=center] at ([xshift=0cm, yshift=0.2cm]current page.south) {\includegraphics[height=0.25cm]{../ixti_logo.png}};
@@ -163,7 +164,7 @@
 }
 
 % --- Info ---
-\title{Vibe Coder Guide}
+\title{Vibe Engineer Guide}
 \subtitle{Domina GitHub Copilot y multiplica tu productividad}
 \author{IXTI Geoespacial}
 \date{2026}
@@ -187,7 +188,7 @@
     % Logo
     \node[anchor=north west] at ([xshift=1cm, yshift=-0.8cm]current page.north west) {\includegraphics[height=1.2cm]{../ixti_logo.png}};
     % Title
-    \node[anchor=west, text=white, font=\fontsize{36}{42}\selectfont\bfseries, text width=13cm] at ([xshift=2cm, yshift=1.5cm]current page.west) {Vibe Coder Guide};
+    \node[anchor=west, text=white, font=\fontsize{36}{42}\selectfont\bfseries, text width=13cm] at ([xshift=2cm, yshift=1.5cm]current page.west) {Vibe Engineer Guide};
     % Subtitle
     \node[anchor=west, text=ixtiGreen, font=\Large] at ([xshift=2cm, yshift=0.3cm]current page.west) {Domina GitHub Copilot y multiplica tu productividad};
     % Bottom info
@@ -210,6 +211,50 @@
     };
     \node[anchor=center, text=ixtiGreen, font=\large] at ([yshift=-2.5cm]current page.center) {--- La nueva realidad del desarrollo de software};
   \end{tikzpicture}
+\end{frame}
+
+% ============================================================
+% VIBE CODER vs VIBE ENGINEER
+% ============================================================
+\begin{frame}{Vibe Coder vs.\ Vibe Engineer}
+  \framesubtitle{La misma evoluci\'on que \textit{programador} \(\to\) \textit{desarrollador}, pero con IA}
+
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiLightGray!10, colframe=ixtiLightGray, title={\faCode\ Vibe Coder}, fonttitle=\small\bfseries, coltitle=ixtiDark, top=2pt, bottom=2pt]
+        \footnotesize
+        \textit{``Le pido a la IA y acepto lo que salga''}
+        \vspace{0.1em}
+        \begin{itemize}\setlength{\itemsep}{0pt}
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Prompt gen\'erico, resultado gen\'erico
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] No define reglas ni estructura
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Cada archivo sale diferente
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Sin tests, sin validaci\'on
+          \item[\textcolor{ixtiLightGray}{\faAngleRight}] Funciona\ldots\ hasta que no
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{tcolorbox}[colback=ixtiGreen!5, colframe=ixtiTeal, title={\faCogs\ Vibe Engineer}, fonttitle=\small\bfseries, coltitle=white, top=2pt, bottom=2pt]
+        \footnotesize
+        \textit{``Configuro la IA para que trabaje con mis reglas''}
+        \vspace{0.1em}
+        \begin{itemize}\setlength{\itemsep}{0pt}
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] Define arquitectura y convenciones
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] Crea instrucciones, agentes y skills
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] M\'odulos id\'enticos y consistentes
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] Tests y validaci\'on autom\'aticos
+          \item[\textcolor{ixtiGreen}{\faAngleRight}] C\'odigo listo para producci\'on
+        \end{itemize}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.2em}
+  \begin{quoteblock}[top=3pt, bottom=3pt]
+    \small Un \textbf{programador} escrib\'ia c\'odigo. Un \textbf{desarrollador} dise\~naba sistemas.\\
+    Un \textbf{vibe coder} le pide a la IA. Un \textbf{vibe engineer} \textit{dise\~na c\'omo la IA trabaja para \'el}.
+  \end{quoteblock}
 \end{frame}
 
 % ============================================================
@@ -834,19 +879,19 @@ You are an expert FastAPI backend developer.
 
   \centering
   \begin{tikzpicture}[
-    step/.style={draw=ixtiTeal, fill=ixtiTeal!8, rounded corners=8pt, minimum width=2.2cm, minimum height=1.4cm, align=center, font=\scriptsize, line width=1pt},
-    arrow/.style={-{Stealth[length=5pt]}, ixtiGreen, line width=1.5pt}
+    stepbox/.style={draw=ixtiTeal, fill=ixtiTeal!8, rounded corners=8pt, minimum width=2.2cm, minimum height=1.4cm, align=center, font=\scriptsize, line width=1pt},
+    steparrow/.style={-{Stealth[length=5pt]}, ixtiGreen, line width=1.5pt}
   ]
-    \node[step] (s1) at (0,0) {\textcolor{ixtiTeal}{\faKeyboard}\\[3pt]\textbf{1. Input}\\Entidad};
-    \node[step] (s2) at (2.7,0) {\textcolor{ixtiTeal}{\faFileCode}\\[3pt]\textbf{2. Plantillas}\\templates};
-    \node[step] (s3) at (5.4,0) {\textcolor{ixtiTeal}{\faCubes}\\[3pt]\textbf{3. Genera}\\7 archivos};
-    \node[step] (s4) at (8.1,0) {\textcolor{ixtiTeal}{\faPlug}\\[3pt]\textbf{4. Registra}\\main.py};
-    \node[step] (s5) at (10.8,0) {\textcolor{ixtiTeal}{\faVial}\\[3pt]\textbf{5. Tests}\\patterns};
+    \node[stepbox] (s1) at (0,0) {\textcolor{ixtiTeal}{\faKeyboard}\\[3pt]\textbf{1. Input}\\Entidad};
+    \node[stepbox] (s2) at (2.7,0) {\textcolor{ixtiTeal}{\faFileCode}\\[3pt]\textbf{2. Plantillas}\\templates};
+    \node[stepbox] (s3) at (5.4,0) {\textcolor{ixtiTeal}{\faCubes}\\[3pt]\textbf{3. Genera}\\7 archivos};
+    \node[stepbox] (s4) at (8.1,0) {\textcolor{ixtiTeal}{\faPlug}\\[3pt]\textbf{4. Registra}\\main.py};
+    \node[stepbox] (s5) at (10.8,0) {\textcolor{ixtiTeal}{\faVial}\\[3pt]\textbf{5. Tests}\\patterns};
 
-    \draw[arrow] (s1) -- (s2);
-    \draw[arrow] (s2) -- (s3);
-    \draw[arrow] (s3) -- (s4);
-    \draw[arrow] (s4) -- (s5);
+    \draw[steparrow] (s1) -- (s2);
+    \draw[steparrow] (s2) -- (s3);
+    \draw[steparrow] (s3) -- (s4);
+    \draw[steparrow] (s4) -- (s5);
   \end{tikzpicture}
 
   \vspace{0.5em}
